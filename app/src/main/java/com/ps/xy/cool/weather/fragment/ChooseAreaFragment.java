@@ -1,6 +1,7 @@
 package com.ps.xy.cool.weather.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,9 +18,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.ps.xy.cool.weather.R;
+import com.ps.xy.cool.weather.activities.WeatherActivity;
 import com.ps.xy.cool.weather.db.City;
 import com.ps.xy.cool.weather.db.Country;
 import com.ps.xy.cool.weather.db.Province;
+import com.ps.xy.cool.weather.gson.Weather;
 import com.ps.xy.cool.weather.util.HttpUtil;
 import com.ps.xy.cool.weather.util.Utility;
 
@@ -71,9 +74,7 @@ public class ChooseAreaFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-
         super.onActivityCreated(savedInstanceState);
-
         listView.setOnItemClickListener((parent, view, position, id) -> {
             if (currentLevel == LEVEL_PROVINCE) {
                 selectedProvince = provinceList.get(position);
@@ -81,6 +82,14 @@ public class ChooseAreaFragment extends Fragment {
             } else if (currentLevel == LEVEL_CITY) {
                 selectedCity = cityList.get(position);
                 queryCounties();
+            }else if (currentLevel == LEVEL_COUNTRY) {
+                String weatherId = countryList.get(position).getWeatherId();
+                Log.i(TAG, "onActivityCreated: weatherId :" + weatherId);
+                Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                intent.putExtra("weather_id", weatherId);
+                startActivity(intent);
+                Objects.requireNonNull(getActivity()).finish();
+
             }
         });
 
