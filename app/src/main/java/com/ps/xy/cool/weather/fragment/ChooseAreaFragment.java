@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.ps.xy.cool.weather.MainActivity;
 import com.ps.xy.cool.weather.R;
 import com.ps.xy.cool.weather.activities.WeatherActivity;
 import com.ps.xy.cool.weather.db.City;
@@ -82,13 +83,21 @@ public class ChooseAreaFragment extends Fragment {
             } else if (currentLevel == LEVEL_CITY) {
                 selectedCity = cityList.get(position);
                 queryCounties();
-            }else if (currentLevel == LEVEL_COUNTRY) {
+            } else if (currentLevel == LEVEL_COUNTRY) {
                 String weatherId = countryList.get(position).getWeatherId();
-                Log.i(TAG, "onActivityCreated: weatherId :" + weatherId);
-                Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                intent.putExtra("weather_id", weatherId);
-                startActivity(intent);
-                Objects.requireNonNull(getActivity()).finish();
+                if (getActivity() instanceof MainActivity) {
+                    Log.i(TAG, "onActivityCreated: weatherId :" + weatherId);
+                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                    intent.putExtra("weather_id", weatherId);
+                    startActivity(intent);
+                    Objects.requireNonNull(getActivity()).finish();
+                } else if (getActivity() instanceof WeatherActivity) {
+                    WeatherActivity activity = (WeatherActivity) getActivity();
+                    activity.drawerLayout.closeDrawers();
+                    activity.swipeRefreshLayout.setRefreshing(true);
+                    activity.requestWeather(weatherId);
+                }
+
 
             }
         });
